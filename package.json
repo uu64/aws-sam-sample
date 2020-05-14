@@ -1,0 +1,7 @@
+{
+  "name": "aws-sam-sample",
+  "version": "1.0.0",
+  "description": "Sample project for AWS SAM.",
+  "main": "index.js",
+  "license": "MIT"
+}
