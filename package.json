@@ -3,5 +3,16 @@
   "version": "1.0.0",
   "description": "Sample project for AWS SAM.",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
+    "@types/node": "^14.0.1",
+    "ts-loader": "^7.0.4",
+    "typescript": "^3.9.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js --mode development"
+  }
 }

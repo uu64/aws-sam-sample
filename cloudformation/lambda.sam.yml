@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Template for aws-sam-sample
+Resources:
+  TodoApiGW:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: True
+      DefinitionBody:
+        "Fn::Transform":
+          Name: "AWS::Include"
+          Parameters:
+            Location: "s3://todo-src-bucket/swagger/swagger.yml"
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Principal:
+              Service: "lambda.amazonaws.com"
+      AutoPublishAlias: "SamSample"
+      CodeUri: "../dist"
+      Handler: bundle.getList
+      Runtime: nodejs12.x
+      Events:
+        HttpGet:
+          Type: Api
+          Properties:
+            Path: "/todos"
+            Method: get
+            RestApiId: !Ref TodoApiGW
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref TodoApiGW
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Prod'
+
+
+
+
+
+
+

@@ -1,0 +1,182 @@
+openapi: 3.0.3
+info:
+  title: ToDo API
+  description: The API for sample ToDo Apps.
+  version: 1.0.0
+paths:
+  /todos:
+    get:
+      summary: Get a list of todos.
+      responses:
+        '200':
+          description: A JSON array of todo objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+        '5XX':
+          $ref: '#/components/responses/500UnexpectedError'
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  #   post:
+  #     summary: Create a new todo.
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/TodoProp'
+  #     responses:
+  #       '200':
+  #         description: Numeric ID of the new todo.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 id:
+  #                   type: integer
+  #       '5XX':
+  #         $ref: '#/components/responses/500UnexpectedError'
+  #     x-amazon-apigateway-integration:
+  #       responses:
+  #         default:
+  #           statusCode: 200
+  #       uri:
+  #         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+  #       passthroughBehavior: when_no_match
+  #       httpMethod: POST
+  #       type: aws_proxy
+  # /todos/{id}:
+  #   get:
+  #     summary: Get a todo by ID
+  #     parameters:
+  #       - name: id
+  #         description: Numeric ID of the todo to get
+  #         schema:
+  #           type: integer
+  #         in: path
+  #         required: true
+  #     responses:
+  #       '200':
+  #         description: A todo object
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/Todo'
+  #       '404':
+  #         $ref: '#/components/responses/404NotFound'
+  #       '5XX':
+  #         $ref: '#/components/responses/500UnexpectedError'
+  #     x-amazon-apigateway-integration:
+  #       responses:
+  #         default:
+  #           statusCode: 200
+  #       uri:
+  #         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+  #       passthroughBehavior: when_no_match
+  #       httpMethod: POST
+  #       type: aws_proxy
+  #   put:
+  #     summary: Update a todo by ID.
+  #     parameters:
+  #       - name: id
+  #         description: Numeric ID of the todo to get
+  #         schema:
+  #           type: integer
+  #         in: path
+  #         required: true
+  #     responses:
+  #       '200':
+  #         description: A updated todo object
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/Todo'
+  #       '404':
+  #         $ref: '#/components/responses/404NotFound'
+  #       '5XX':
+  #         $ref: '#/components/responses/500UnexpectedError'
+  #     x-amazon-apigateway-integration:
+  #       responses:
+  #         default:
+  #           statusCode: 200
+  #       uri:
+  #         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+  #       passthroughBehavior: when_no_match
+  #       httpMethod: POST
+  #       type: aws_proxy
+  #   delete:
+  #     summary: Delete a todo by ID.
+  #     parameters:
+  #       - name: id
+  #         description: Numeric ID of the todo to get
+  #         schema:
+  #           type: integer
+  #         in: path
+  #         required: true
+  #     responses:
+  #       '200':
+  #         description: The todo is deleted successfully.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #       '404':
+  #         $ref: '#/components/responses/404NotFound'
+  #       '5XX':
+  #         $ref: '#/components/responses/500UnexpectedError'
+  #     x-amazon-apigateway-integration:
+  #       responses:
+  #         default:
+  #           statusCode: 200
+  #       uri:
+  #         Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+  #       passthroughBehavior: when_no_match
+  #       httpMethod: POST
+  #       type: aws_proxy
+components:
+  schemas:
+    Todo:
+      properties:
+        id:
+          type: integer
+        prop:
+          $ref: '#/components/schemas/TodoProp'
+      required:
+        - id
+        - prop
+    TodoProp:
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - title
+    Error:
+      properties:
+        message:
+          type: string
+  responses:
+    404NotFound:
+      description: A todo with the specified ID was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    500UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
